@@ -12,12 +12,33 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "keyboard-shortcut-helper.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "keyboard",
+          "title": "Keyboard Shortcuts",
+          "icon": "src/media/keyboard-svgrepo-com.svg"
+        }
+      ]
+    },
+    "views": {
+      "keyboard": [
+        {
+          "type": "webview",
+          "id": "keyboardShortcutsView",
+          "name": "Keyboard Shortcuts"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "calicoColors.clearColors",
+          "group": "navigation",
+          "when": "view == calicoColors.colorsView"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

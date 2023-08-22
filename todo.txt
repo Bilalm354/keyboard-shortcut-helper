@@ -1,0 +1,4 @@
+TODO
+
+- [ ] Create panel/ sidebar container 
+- [ ] populate with keyboard shortcuts 
