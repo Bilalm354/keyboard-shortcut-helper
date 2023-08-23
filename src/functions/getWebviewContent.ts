@@ -1,14 +1,8 @@
-import * as vscode from 'vscode';
+import { getModes } from './getModes';
 
 export function getWebviewContent() {
   console.log('hi');
-
-  const { window } = vscode;
-  console.log({ window });
-  vscode.window.showInformationMessage('Hello World from vscode-keyboard-shortcuts!');
-  const { terminals } = vscode.window;
-  console.log({ terminals });
-  debugger;
+  const modes = getModes();
 
   const shortcuts = [
     // General
@@ -197,6 +191,7 @@ export function getWebviewContent() {
         </head>
         <body>
           <h1>VSCode Keyboard Shortcuts</h1>
+		  Modes: ${modes.join(', ')}
           ${sectionsHtml}
         </body>
       </html>

@@ -29,15 +29,6 @@
           "name": "Keyboard Shortcuts"
         }
       ]
-    },
-    "menus": {
-      "view/title": [
-        {
-          "command": "calicoColors.clearColors",
-          "group": "navigation",
-          "when": "view == calicoColors.colorsView"
-        }
-      ]
     }
   },
   "scripts": {

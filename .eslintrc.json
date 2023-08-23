@@ -49,5 +49,10 @@
                 "argsIgnorePattern": "^_"
             }
         ]
-    }
+    },
+    "ignorePatterns": [
+        "out",
+        "dist",
+        "**/*.d.ts"
+    ]
 }
