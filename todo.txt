@@ -2,6 +2,12 @@ TODO
 
 - [X] Create panel/ sidebar container 
 - [X] populate with keyboard shortcuts 
+- [ ] show most appropriate shortcuts
+    - [ ] check what mode I'm in and log that
+    - [ ] show keybinds for focus
+    - [ ] adjust based on mode = eg editor or debugger
+    - [ ] rank shortcuts by most recently used
+    - [ ] create an api that returns most popular commands?
 - [ ] get keyboard shortcuts from vscode 
     - [ ] render them 
 - [ ] add link to reassign the shortcut
@@ -12,10 +18,5 @@ TODO
     - [ ] User
     - [ ] .vscode
 - [ ] track shortcut uses and save locally
-- [ ] show most appropriate shortcuts
-    - [ ] show keybinds for focus
-    - [ ] adjust based on mode = eg editor or debugger
-    - [ ] rank shortcuts by most recently used
-    - [ ] create an api that returns most popular commands?
 - [ ] add favourites which show at top 
 - [ ] add button to say you've learned it and don't want to see it again 
