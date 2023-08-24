@@ -1,6 +1,33 @@
 import * as vscode from 'vscode';
 import { getWebviewContent } from './functions/getWebviewContent';
 
+// there are more event - keep this in mind
+const debugEvents = [
+  vscode.debug.onDidStartDebugSession,
+  vscode.debug.onDidChangeBreakpoints, 
+  vscode.debug.onDidTerminateDebugSession,
+  vscode.debug.onDidChangeActiveDebugSession,
+  vscode.debug.onDidReceiveDebugSessionCustomEvent
+];
+
+const terminalEvents = [
+  vscode.window.onDidOpenTerminal,
+  vscode.window.onDidChangeActiveTerminal,
+  vscode.window.onDidChangeTerminalState,
+  vscode.window.onDidCloseTerminal
+];
+
+const eventsToRefreshWebviewFor = [
+  vscode.window.onDidChangeWindowState,
+  vscode.window.onDidChangeActiveTextEditor,
+  vscode.window.onDidChangeVisibleTextEditors,
+  vscode.window.onDidChangeTextEditorSelection,
+  vscode.workspace.onDidChangeTextDocument, 
+  vscode.workspace.onDidChangeWorkspaceFolders, 
+  ...debugEvents,
+  ...terminalEvents
+];
+
 export type Focus = 'editor' | 'terminal' | 'debug' | 'unknown';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -10,58 +37,33 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(KeyboardShortcutViewProvider.viewType, provider));
 
-  // register commands
-  context.subscriptions.push(vscode.commands.registerCommand('extension.refreshWebview', () => {
-    provider.refreshWebview(); // Call a method to refresh the webview
-  }));
-  context.subscriptions.push(vscode.commands.registerCommand('extension.onDidOpenTerminal', (isInteractedWith) => {
-    provider.setFocus('terminal');
-    vscode.window.showInformationMessage('onDidOpenTerminal');
-    vscode.window.showInformationMessage(`isInteractedWith: ${isInteractedWith}`);
-  }));
-  context.subscriptions.push(vscode.commands.registerCommand('extension.onDidChangeTextDocument', () => {
-    provider.setFocus('editor');
-    vscode.window.showInformationMessage('onDidChangeTextDocument');
-    vscode.window.showInformationMessage('Show text editing shortcuts');
-  }));
+  vscode.window.onDidOpenTerminal(() => {
+    provider.setFocus('terminal'); // it may not actually be in focus but if the person just opened it, it's probably what they're looking at
+  });
 
-
-  const eventsToRefreshWebviewFor = [
-    vscode.window.onDidChangeActiveTextEditor,
-    vscode.debug.onDidChangeActiveDebugSession,
-    vscode.window.onDidChangeVisibleTextEditors,
-    vscode.window.onDidOpenTerminal,
-    vscode.workspace.onDidChangeTextDocument, 
-    vscode.window.onDidChangeTextEditorSelection,
-    vscode.workspace.onDidChangeWorkspaceFolders, 
-    vscode.window.onDidChangeActiveTerminal,
-    // Debug ones below could be used to change mode - would then need to implement a function to set mode instead getting mode the current way	
-    vscode.debug.onDidStartDebugSession,
-    vscode.debug.onDidChangeBreakpoints, 
-    vscode.debug.onDidTerminateDebugSession,
-  ];
+  vscode.window.onDidChangeTerminalState((terminal) => {
+    const { state } = terminal;
+    const { isInteractedWith } = state;
+    if (isInteractedWith) {
+      provider.setFocus('terminal');
+    } else {
+      provider.setFocus('unknown');
+    }
+    vscode.commands.executeCommand('extension.onDidOpenTerminal', isInteractedWith); // rename onDidOpenTerminal to onDidChangeTerminalState or something
+  });
   
-  
-  // Register the event handlers
   eventsToRefreshWebviewFor.forEach((event) => {
-    event(() => {
-      vscode.commands.executeCommand('extension.refreshWebview');
-      
+    event((event) => {
+      if (event) {
+        vscode.window.showInformationMessage(`event: ${JSON.stringify(event)}`);
+      }
+      provider.refreshWebview();
     });
   });
 
-  vscode.window.onDidOpenTerminal((terminal) => {
-    const {state} = terminal;
-    const {isInteractedWith} = state;
-    vscode.commands.executeCommand('extension.onDidOpenTerminal', isInteractedWith);
-  });
-
   vscode.workspace.onDidChangeTextDocument((_event) => {
-    vscode.commands.executeCommand('extension.onDidChangeTextDocument');
+    provider.setFocus('editor');
   });
-  
-  // Initial call to refresh the webview
-  vscode.commands.executeCommand('extension.refreshWebview');
 }
 
 class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
@@ -72,15 +74,15 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
   private focus: Focus = 'unknown';
 
   constructor(
-		private readonly _extensionUri: vscode.Uri,
+		private readonly _extensionUri: vscode.Uri
   ) { }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken,
+    _token: vscode.CancellationToken
   ) {
-    vscode.window.showInformationMessage('resolveWebviewView');
+    console.log('resolveWebviewView');
 
     this._view = webviewView;
 
@@ -101,7 +103,6 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
   }
 
   public refreshWebview() {
-    vscode.window.showInformationMessage('refreshWebview');
     if (this._view) {
       const focus = this.getFocus();
       console.log('focus', focus);

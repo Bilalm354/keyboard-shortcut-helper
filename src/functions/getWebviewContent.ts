@@ -129,7 +129,7 @@ export function getWebviewContent(focus?: Focus) {
     { description: 'Copy selection', keys: '⌘C' },
     { description: 'Scroll up/down', keys: '⌘↑ / ↓' },
     { description: 'Scroll page up/down', keys: 'PgUp / PgDn' },
-    { description: 'Scroll to top/bottom', keys: '⌘Home / End' },
+    { description: 'Scroll to top/bottom', keys: '⌘Home / End' }
   ];
 
   // Organize shortcuts into sections
@@ -144,7 +144,7 @@ export function getWebviewContent(focus?: Focus) {
     { title: 'File Management', shortcuts: defaultMacShortcuts.slice(71, 81) },
     { title: 'Display', shortcuts: defaultMacShortcuts.slice(81, 90) },
     { title: 'Debug', shortcuts: defaultMacShortcuts.slice(90, 97) },
-    { title: 'Integrated Terminal', shortcuts: defaultMacShortcuts.slice(97) },
+    { title: 'Integrated Terminal', shortcuts: defaultMacShortcuts.slice(97) }
   ];
 
   // Generate HTML
