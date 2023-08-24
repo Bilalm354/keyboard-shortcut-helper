@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 export function getModes() {
   const modeChecks = [
     {
-      name: 'isDebugging',
+      name: 'activeDebugSession',
       condition: () => !!vscode.debug.activeDebugSession,
     },
     {
@@ -15,17 +15,17 @@ export function getModes() {
       condition: () => vscode.window.activeTextEditor !== undefined,
     },
     {
-      name: 'hasTerminalOpen',
+      name: 'activeTerminal',
+      condition: () => vscode.window.activeTerminal !== undefined,
+    },
+    {
+      name: 'hasOneOrMoreTerminals',
       condition: () => vscode.window.terminals.length > 0,
     },
     {
       name: 'isGitExtensionActive',
       condition: () => vscode.extensions.getExtension('vscode.git')?.isActive,
-    },
-    {
-      name: 'isTaskRunning',
-      condition: () => vscode.tasks.taskExecutions.length > 0,
-    },
+    }
   ];
 
   const activeModes = modeChecks.filter((modeCheck) => modeCheck.condition());

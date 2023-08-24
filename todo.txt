@@ -2,6 +2,8 @@ TODO
 
 - [X] Create panel/ sidebar container 
 - [X] populate with keyboard shortcuts
+- [ ] if have multiple tab groups then get number of tab groups
+    - [ ] use this to inform which shortcuts are shown
 - [ ] get keyboard shortcuts from vscode 
     - [ ] these
         - [ ] default

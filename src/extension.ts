@@ -13,19 +13,30 @@ export function activate(context: vscode.ExtensionContext) {
     provider.refreshWebview(); // Call a method to refresh the webview
   }));
 
-  // Listen for mode change events
-  vscode.window.onDidChangeActiveTextEditor(() => {
-    executeCommandRefreshWebview();
+  const eventsToRefreshWebviewFor = [
+    vscode.window.onDidChangeActiveTextEditor,
+    vscode.debug.onDidChangeActiveDebugSession,
+    vscode.window.onDidChangeVisibleTextEditors,
+    vscode.window.onDidOpenTerminal,
+    vscode.workspace.onDidChangeTextDocument, // Editor content changes
+    vscode.window.onDidChangeTextEditorSelection, // Editor selection changes
+    vscode.workspace.onDidChangeWorkspaceFolders, // Workspace folder changes
+    vscode.window.onDidChangeActiveTerminal, // Active terminal changes
+    // Debug ones below could be used to change mode - would then need to implement a function to set mode instead getting mode the current way	
+    vscode.debug.onDidStartDebugSession, // Debug session starts
+    vscode.debug.onDidChangeBreakpoints, // Breakpoints change
+    vscode.debug.onDidTerminateDebugSession, // Debug session terminates
+  ];
+  
+  
+  // Register the event handlers
+  eventsToRefreshWebviewFor.forEach((event) => {
+    event(() => {
+      executeCommandRefreshWebview();
+    });
   });
-
-  vscode.debug.onDidChangeActiveDebugSession(() => {
-    executeCommandRefreshWebview();
-  });
-
-  vscode.window.onDidChangeVisibleTextEditors(() => {
-    executeCommandRefreshWebview();
-  });
-
+  
+  // Initial call to refresh the webview
   executeCommandRefreshWebview();
 }
 
