@@ -2,24 +2,23 @@ TODO
 
 - [X] Create panel/ sidebar container 
 - [X] populate with keyboard shortcuts
+- [x] check what mode I'm in and log that
+- [ ] show shortcuts based on modes and what i'm focused on
+- [ ] rank shortcuts - maybe by most recently used
+- [ ] if have multiple tab groups then get number of tab groups
+- [ ] when you do something with mouse then show an info message to say which keyboard shortcut you could have done it with
+    - [ ] allow user to disable above feature and other annoying features 
+- [ ] track shortcut uses and save locally
+- [ ] add favourites which show at top / let user choose which shortcuts they want to see 
+- [ ] add button to say you've learned it and don't want to see it again 
+    - [ ] use this to inform which shortcuts are shown
 - [ ] get keyboard shortcuts from vscode
     - [ ] these
-        - [ ] default
+        - [ ] default -- seems not possible 
         - [ ] workspace
         - [ ] User
         - [ ] .vscode
     - [ ] render them 
     - [ ] add link to reassign the shortcut
         - [ ] show this on hover
-- [ ] show most appropriate shortcuts
-    - [x] check what mode I'm in and log that
-    - [ ] show shortcuts based on modes and what i'm focused on
-    - [ ] rank shortcuts - maybe by most recently used
-    - [ ] create an api that returns most popular commands?
-- [ ] when you do something with mouse then show an info message to say which keyboard shortcut you could have done it with
-    - [ ] allow user to disable above feature and other annoying features 
-- [ ] track shortcut uses and save locally
-- [ ] add favourites which show at top / let user choose which shortcuts they want to see 
-- [ ] add button to say you've learned it and don't want to see it again 
-- [ ] if have multiple tab groups then get number of tab groups
-    - [ ] use this to inform which shortcuts are shown
+- [ ] create an api that returns most popular commands?

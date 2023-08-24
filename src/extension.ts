@@ -28,7 +28,7 @@ const eventsToRefreshWebviewFor = [
   ...terminalEvents
 ];
 
-export type Focus = 'editor' | 'terminal' | 'debug' | 'unknown';
+export type Focus = 'editor' | 'terminal' | 'debug' | 'selection' | 'unknown';
 
 export function activate(context: vscode.ExtensionContext) {
   const provider = new KeyboardShortcutViewProvider(context.extensionUri);
@@ -63,6 +63,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.workspace.onDidChangeTextDocument((_event) => {
     provider.setFocus('editor');
+  });
+
+  vscode.window.onDidChangeTextEditorSelection((_event) => {
+    provider.setFocus('selection');
   });
 }
 
