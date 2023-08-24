@@ -1,10 +1,10 @@
+import { Focus } from '../extension';
 import { getModes } from './getModes';
 
-export function getWebviewContent() {
-  console.log('hi');
+export function getWebviewContent(focus?: Focus) {
   const modes = getModes();
 
-  const shortcuts = [
+  const defaultMacShortcuts = [
     // General
     { description: 'Show Command Palette', keys: '⇧⌘P, F1' },
     { description: 'Quick Open, Go to File…', keys: '⌘P' },
@@ -134,17 +134,17 @@ export function getWebviewContent() {
 
   // Organize shortcuts into sections
   const sections = [
-    { title: 'General', shortcuts: shortcuts.slice(0, 6) },
-    { title: 'Basic Editing', shortcuts: shortcuts.slice(6, 23) },
-    { title: 'Multi-Cursor and Selection', shortcuts: shortcuts.slice(23, 34) },
-    { title: 'Search and Replace', shortcuts: shortcuts.slice(34, 40) },
-    { title: 'Rich Languages Editing', shortcuts: shortcuts.slice(40, 51) },
-    { title: 'Navigation', shortcuts: shortcuts.slice(51, 63) },
-    { title: 'Editor Management', shortcuts: shortcuts.slice(63, 71) },
-    { title: 'File Management', shortcuts: shortcuts.slice(71, 81) },
-    { title: 'Display', shortcuts: shortcuts.slice(81, 90) },
-    { title: 'Debug', shortcuts: shortcuts.slice(90, 97) },
-    { title: 'Integrated Terminal', shortcuts: shortcuts.slice(97) },
+    { title: 'General', shortcuts: defaultMacShortcuts.slice(0, 6) },
+    { title: 'Basic Editing', shortcuts: defaultMacShortcuts.slice(6, 23) },
+    { title: 'Multi-Cursor and Selection', shortcuts: defaultMacShortcuts.slice(23, 34) },
+    { title: 'Search and Replace', shortcuts: defaultMacShortcuts.slice(34, 40) },
+    { title: 'Rich Languages Editing', shortcuts: defaultMacShortcuts.slice(40, 51) },
+    { title: 'Navigation', shortcuts: defaultMacShortcuts.slice(51, 63) },
+    { title: 'Editor Management', shortcuts: defaultMacShortcuts.slice(63, 71) },
+    { title: 'File Management', shortcuts: defaultMacShortcuts.slice(71, 81) },
+    { title: 'Display', shortcuts: defaultMacShortcuts.slice(81, 90) },
+    { title: 'Debug', shortcuts: defaultMacShortcuts.slice(90, 97) },
+    { title: 'Integrated Terminal', shortcuts: defaultMacShortcuts.slice(97) },
   ];
 
   // Generate HTML
@@ -191,6 +191,9 @@ export function getWebviewContent() {
         </head>
         <body>
           <h1>VSCode Keyboard Shortcuts</h1>
+		  <h2>Focus: ${focus}</h2>
+		  ${focus === 'editor' ? '<h3>Show Editing Shortcuts!</h3>' : ''}
+
 		  Modes: ${modes.join(', ')}
           ${sectionsHtml}
         </body>
