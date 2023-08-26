@@ -3,17 +3,11 @@ TODO
 - [X] Create panel/ sidebar container 
 - [X] populate with keyboard shortcuts
 - [x] check what mode I'm in and log that
+- [ ] let user pin shortcuts
+- [ ] add favourites which show at top / let user choose which shortcuts they want to see 
 - [x] if have multiple tab groups then get number of tab groups
     - [x] if >= 2 then show multiple tab shortcuts 
     - [ ] BUG: when close a tab then number of tabs doesn't update in the side bar -- maybe no event for it 
-- [ ] let user pin shortcuts
-- [ ] add favourites which show at top / let user choose which shortcuts they want to see 
-- [x] show shortcuts based on modes and what i'm focused on
-    - [ ] editor
-    - [ ] terminal 
-    - [ ] debug
-    - [ ] selection
-    - [ ] multiple tab groups
 - [ ] rank shortcuts - maybe by most recently used
 - [ ] when you do something with mouse then show an info message to say which keyboard shortcut you could have done it with
     - [ ] allow user to disable above feature and other annoying features 

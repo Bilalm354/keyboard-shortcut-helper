@@ -2,12 +2,26 @@ import { Focus } from '../extension';
 import { getModes } from './getModes';
 import * as vscode from 'vscode';
 
-type Shortcut = {
+type SectionTags =
+  | 'General'
+  | 'Basic Editing'
+  | 'Multi-Cursor and Selection'
+  | 'Search and Replace'
+  | 'Rich Languages Editing'
+  | 'Navigation'
+  | 'Editor Management'
+  | 'File Management'
+  | 'Display'
+  | 'Debug'
+  | 'Integrated Terminal';
+
+
+export type Shortcut = {
   description: string;
   keys: string;
 };
 
-type Sections = Record<string, Shortcut[]>;
+type Sections = Record<SectionTags, Shortcut[]>;
 
 const sections: Sections = {
   'General': [
@@ -90,7 +104,7 @@ const sections: Sections = {
   ]
 };
 
-export function mapFocusToSections(focus: Focus) {
+export function mapFocusToSections(focus: Focus): SectionTags[] {
   switch (focus) {
   case 'editor':
     return ['General', 'Basic Editing', 'Multi-Cursor and Selection', 'Search and Replace', 'Rich Languages Editing', 'Navigation', 'Editor Management', 'File Management', 'Display'];
@@ -101,17 +115,16 @@ export function mapFocusToSections(focus: Focus) {
   case 'selection':
     return ['Multi-Cursor and Selection'];
   default:
-    return Object.keys(sections);
+    return Object.keys(sections) as SectionTags[];
   }
 }
 
-
 export function generateSectionsHtml(focus?: Focus) {
-  const focusedSections = focus ? mapFocusToSections(focus) : Object.keys(sections);
+  const focusedSectionTags: SectionTags[] = focus ? mapFocusToSections(focus) : Object.keys(sections) as SectionTags[];
 
-  if (vscode.window.tabGroups.all.length > 1) { focusedSections.unshift('Editor Management'); }
+  if (vscode.window.tabGroups.all.length > 1) { focusedSectionTags.unshift('Editor Management'); }
 
-  const focusedSectionsSet = new Set(focusedSections);
+  const focusedSectionsSet = new Set(focusedSectionTags);
   
   const sectionsHtml = [...focusedSectionsSet].map((title) => {
     const shortcuts = sections[title];
