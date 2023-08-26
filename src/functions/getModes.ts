@@ -1,30 +1,31 @@
 import * as vscode from 'vscode';
 
+
 export function getModes() {
   const modeChecks = [
     {
       name: 'activeDebugSession',
-      condition: () => !!vscode.debug.activeDebugSession,
+      condition: () => !!vscode.debug.activeDebugSession
     },
     {
       name: 'hasMultipleTabGroups',
-      condition: () => vscode.window.visibleTextEditors.length > 1,
+      condition: () => vscode.window.visibleTextEditors.length > 1
     },
     {
       name: 'activeEditor',
-      condition: () => vscode.window.activeTextEditor !== undefined,
+      condition: () => vscode.window.activeTextEditor !== undefined
     },
     {
       name: 'activeTerminal',
-      condition: () => vscode.window.activeTerminal !== undefined,
+      condition: () => vscode.window.activeTerminal !== undefined
     },
     {
       name: 'hasOneOrMoreTerminals',
-      condition: () => vscode.window.terminals.length > 0,
+      condition: () => vscode.window.terminals.length > 0
     },
     {
       name: 'isGitExtensionActive',
-      condition: () => vscode.extensions.getExtension('vscode.git')?.isActive,
+      condition: () => vscode.extensions.getExtension('vscode.git')?.isActive
     }
   ];
 

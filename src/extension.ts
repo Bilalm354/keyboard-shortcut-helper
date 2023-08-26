@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { getWebviewContent } from './functions/getWebviewContent';
 
-// there are more event - keep this in mind
+// there are more events - keep this in mind
 const debugEvents = [
   vscode.debug.onDidStartDebugSession,
   vscode.debug.onDidChangeBreakpoints, 
@@ -17,15 +17,22 @@ const terminalEvents = [
   vscode.window.onDidCloseTerminal
 ];
 
+const tabGroupEvents = [
+  vscode.window.tabGroups.onDidChangeTabGroups,
+  vscode.window.tabGroups.onDidChangeTabs
+];
+
 const eventsToRefreshWebviewFor = [
+  vscode.window.onDidChangeTextEditorViewColumn,
   vscode.window.onDidChangeWindowState,
   vscode.window.onDidChangeActiveTextEditor,
   vscode.window.onDidChangeVisibleTextEditors,
   vscode.window.onDidChangeTextEditorSelection,
   vscode.workspace.onDidChangeTextDocument, 
   vscode.workspace.onDidChangeWorkspaceFolders, 
+  ...terminalEvents,
   ...debugEvents,
-  ...terminalEvents
+  ...tabGroupEvents
 ];
 
 export type Focus = 'editor' | 'terminal' | 'debug' | 'selection' | 'unknown';
@@ -57,7 +64,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (event) {
         vscode.window.showInformationMessage(`event: ${JSON.stringify(event)}`);
       }
-      provider.refreshWebview();
+      provider.refreshWebviewAndUpdateState();
     });
   });
 
@@ -76,6 +83,7 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
   private focus: Focus = 'unknown';
+  private numberOfTabGroups?: number = vscode.window.tabGroups.all.length;
 
   constructor(
 		private readonly _extensionUri: vscode.Uri
@@ -86,8 +94,6 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
     _context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
-    console.log('resolveWebviewView');
-
     this._view = webviewView;
 
     webviewView.webview.options = {
@@ -98,19 +104,18 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
         this._extensionUri
       ]
     };
-
-    webviewView.webview.html = getWebviewContent();
+    const focus = this.getFocus();
+    webviewView.webview.html = getWebviewContent({ focus });
 
     webviewView.webview.onDidReceiveMessage(data => {
       console.log('onDidReceiveMessage', data);
     });
   }
 
-  public refreshWebview() {
+  public refreshWebviewAndUpdateState() {
     if (this._view) {
       const focus = this.getFocus();
-      console.log('focus', focus);
-      this._view.webview.html = getWebviewContent(focus);
+      this._view.webview.html = getWebviewContent({ focus });
     }
   }
 

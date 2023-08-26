@@ -1,5 +1,6 @@
 import { Focus } from '../extension';
 import { getModes } from './getModes';
+import * as vscode from 'vscode';
 
 type Shortcut = {
   description: string;
@@ -107,8 +108,12 @@ export function mapFocusToSections(focus: Focus) {
 
 export function generateSectionsHtml(focus?: Focus) {
   const focusedSections = focus ? mapFocusToSections(focus) : Object.keys(sections);
+
+  if (vscode.window.tabGroups.all.length > 1) { focusedSections.unshift('Editor Management'); }
+
+  const focusedSectionsSet = new Set(focusedSections);
   
-  const sectionsHtml = focusedSections.map((title) => {
+  const sectionsHtml = [...focusedSectionsSet].map((title) => {
     const shortcuts = sections[title];
     const shortcutRows = shortcuts.map((shortcut) => `
       <tr>
@@ -128,8 +133,9 @@ export function generateSectionsHtml(focus?: Focus) {
   return sectionsHtml;
 }
 
-export function getWebviewContent(focus?: Focus) {
+export function getWebviewContent({ focus }: {focus?: Focus}) {
   const modes = getModes();
+  const numberOfTabGroups = vscode.window.tabGroups.all.length;
 
   const sectionsHtml = generateSectionsHtml(focus);
 
@@ -161,6 +167,7 @@ export function getWebviewContent(focus?: Focus) {
         <body>
           <h1>VSCode Keyboard Shortcuts</h1>
           <h2>Focus: ${focus}</h2>
+          <h2>Number of Tab Groups: ${numberOfTabGroups}</h2>
           ${sectionsHtml}
           Modes: ${modes.join(', ')}
         </body>
