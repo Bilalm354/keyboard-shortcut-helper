@@ -21,9 +21,9 @@ export type Shortcut = {
   keys: string;
 };
 
-type Sections = Record<SectionTags, Shortcut[]>;
+type Shortcuts = Record<SectionTags, Shortcut[]>;
 
-const sections: Sections = {
+const defaultMacShortcuts: Shortcuts = {
   'General': [
     { description: 'Show Command Palette', keys: '⇧⌘P, F1' },
     { description: 'Quick Open, Go to File…', keys: '⌘P' },
@@ -115,19 +115,19 @@ export function mapFocusToSections(focus: Focus): SectionTags[] {
   case 'selection':
     return ['Multi-Cursor and Selection'];
   default:
-    return Object.keys(sections) as SectionTags[];
+    return Object.keys(defaultMacShortcuts) as SectionTags[];
   }
 }
 
 export function generateSectionsHtml(focus?: Focus) {
-  const focusedSectionTags: SectionTags[] = focus ? mapFocusToSections(focus) : Object.keys(sections) as SectionTags[];
+  const focusedSectionTags: SectionTags[] = focus ? mapFocusToSections(focus) : Object.keys(defaultMacShortcuts) as SectionTags[];
 
   if (vscode.window.tabGroups.all.length > 1) { focusedSectionTags.unshift('Editor Management'); }
 
   const focusedSectionsSet = new Set(focusedSectionTags);
   
   const sectionsHtml = [...focusedSectionsSet].map((title) => {
-    const shortcuts = sections[title];
+    const shortcuts = defaultMacShortcuts[title];
     const shortcutRows = shortcuts.map((shortcut) => `
       <tr>
         <td>${shortcut.description}</td>

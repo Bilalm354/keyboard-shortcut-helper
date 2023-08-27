@@ -22,14 +22,32 @@ const tabGroupEvents = [
   vscode.window.tabGroups.onDidChangeTabs
 ];
 
+const workspaceEvents = [
+  // vscode.workspace.onDidChangeConfiguration,
+  vscode.workspace.onDidChangeTextDocument, 
+  vscode.workspace.onDidChangeWorkspaceFolders
+  // vscode.workspace.onDidCloseTextDocument,
+  // vscode.workspace.onDidCreateFiles,
+  // vscode.workspace.onDidDeleteFiles,
+  // vscode.workspace.onDidOpenTextDocument,
+  // vscode.workspace.onDidRenameFiles,
+  // vscode.workspace.onDidSaveTextDocument,
+  // vscode.workspace.onWillCreateFiles,
+  // vscode.workspace.onWillDeleteFiles,
+  // vscode.workspace.onWillRenameFiles,
+  // vscode.workspace.onWillSaveTextDocument,
+  // vscode.workspace.onDidChangeNotebookDocument,
+  // vscode.workspace.onDidCloseNotebookDocument
+  // There are more
+];
+
 const eventsToRefreshWebviewFor = [
   vscode.window.onDidChangeTextEditorViewColumn,
   vscode.window.onDidChangeWindowState,
   vscode.window.onDidChangeActiveTextEditor,
   vscode.window.onDidChangeVisibleTextEditors,
   vscode.window.onDidChangeTextEditorSelection,
-  vscode.workspace.onDidChangeTextDocument, 
-  vscode.workspace.onDidChangeWorkspaceFolders, 
+  ...workspaceEvents,
   ...terminalEvents,
   ...debugEvents,
   ...tabGroupEvents
