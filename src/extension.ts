@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { Shortcut, getWebviewContent } from './functions/getWebviewContent';
+import { getWebviewContent } from './functions/getWebviewContent';
+import { Shortcut } from './types/types';
 
 // there are more events - keep this in mind
 const debugEvents = [
@@ -101,7 +102,7 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
   private focus: Focus = 'unknown';
-  private pinnedShortcuts: Shortcut[] = [];
+  private _pinnedShortcuts: Shortcut[] = []; // TODO: implement pinned shortcuts #2
 
   constructor(
 		private readonly _extensionUri: vscode.Uri
