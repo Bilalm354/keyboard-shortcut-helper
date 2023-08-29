@@ -1,156 +1,97 @@
-import { Focus } from '../extension';
+import { Shortcut } from '../types/types';
 import { getModes } from './getModes';
 import * as vscode from 'vscode';
+import * as defaultKeybindingsVscode from '../data/defaultKeybindingsVscode.json' ;
+import { convertToWords } from './caseConverter';
+import { Focus } from '../extension';
 
-type SectionTags =
-  | 'General'
-  | 'Basic Editing'
-  | 'Multi-Cursor and Selection'
-  | 'Search and Replace'
-  | 'Rich Languages Editing'
-  | 'Navigation'
-  | 'Editor Management'
-  | 'File Management'
-  | 'Display'
-  | 'Debug'
-  | 'Integrated Terminal';
+const createShortcutsTableHtml = (shortcuts: Shortcut[]) => {
+  const shortcutRows = shortcuts.map((shortcut) => `
+    <tr>
+      <td>${shortcut.description}</td>
+      <td>${shortcut.keys}</td>
+    </tr>
+  `).join('');
 
-
-export type Shortcut = {
-  description: string;
-  keys: string;
+  return `
+    <table border="1">
+      ${shortcutRows}
+    </table>
+  `;
 };
 
-type Shortcuts = Record<SectionTags, Shortcut[]>;
+function mapJsonWhensToFocuses(jsonWhens: string[]) {}
 
-const defaultMacShortcuts: Shortcuts = {
-  'General': [
-    { description: 'Show Command Palette', keys: '⇧⌘P, F1' },
-    { description: 'Quick Open, Go to File…', keys: '⌘P' },
-    { description: 'New window/instance', keys: '⇧⌘N' },
-    { description: 'Close window/instance', keys: '⌘W' },
-    { description: 'User Settings', keys: '⌘,' },
-    { description: 'Keyboard Shortcuts', keys: '⌘K ⌘S' }
-  ],
-  'Basic Editing': [
-    { description: 'Cut line (empty selection)', keys: '⌘X' },
-    { description: 'Copy line (empty selection)', keys: '⌘C' },
-    { description: 'Move line down/up', keys: '⌥↓ / ⌥↑' },
-    { description: 'Copy line down/up', keys: '⇧⌥↓ / ⇧⌥↑' }
-    // ... other shortcuts in this section ...
-  ],
-  'Multi-Cursor and Selection': [
-    { description: 'Insert cursor', keys: '⌥ + click' },
-    { description: 'Insert cursor above', keys: '⌥⌘↑' },
-    { description: 'Insert cursor below', keys: '⌥⌘↓' },
-    { description: 'Undo last cursor operation', keys: '⌘U' }
-    // ... other shortcuts in this section ...
-  ],
-  'Search and Replace': [
-    { description: 'Find', keys: '⌘F' },
-    { description: 'Replace', keys: '⌥⌘F' },
-    { description: 'Find next/previous', keys: '⌘G / ⇧⌘G' },
-    { description: 'Select all occurrences of Find match', keys: '⌥Enter' }
-    // ... other shortcuts in this section ...
-  ],
-  'Rich Languages Editing': [
-    { description: 'Trigger suggestion', keys: '⌃Space, ⌘I' },
-    { description: 'Trigger parameter hints', keys: '⇧⌘Space' },
-    { description: 'Format document', keys: '⇧⌥F' },
-    { description: 'Format selection', keys: '⌘K ⌘F' }
-    // ... other shortcuts in this section ...
-  ],
-  'Navigation': [
-    { description: 'Show all Symbols', keys: '⌘T' },
-    { description: 'Go to Line...', keys: '⌃G' },
-    { description: 'Go to File...', keys: '⌘P' },
-    { description: 'Go to Symbol...', keys: '⇧⌘O' }
-    // ... other shortcuts in this section ...
-  ],
-  'Editor Management': [
-    { description: 'Close editor', keys: '⌘W' },
-    { description: 'Close folder', keys: '⌘K F' },
-    { description: 'Split editor', keys: '⌘\\' },
-    { description: 'Focus into 1st, 2nd, 3rd editor group', keys: '⌘1 / ⌘2 / ⌘3' }
-    // ... other shortcuts in this section ...
-  ],
-  'File Management': [
-    { description: 'New File', keys: '⌘N' },
-    { description: 'Open File...', keys: '⌘O' },
-    { description: 'Save', keys: '⌘S' },
-    { description: 'Save As...', keys: '⇧⌘S' }
-    // ... other shortcuts in this section ...
-  ],
-  'Display': [
-    { description: 'Toggle full screen', keys: '⌃⌘F' },
-    { description: 'Toggle editor layout (horizontal/vertical)', keys: '⌥⌘0' },
-    { description: 'Zoom in/out', keys: '⌘= / ⇧⌘-' },
-    { description: 'Toggle Sidebar visibility', keys: '⌘B' }
-    // ... other shortcuts in this section ...
-  ],
-  'Debug': [
-    { description: 'Toggle breakpoint', keys: 'F9' },
-    { description: 'Start/Continue', keys: 'F5' },
-    { description: 'Step into/out', keys: 'F11 / ⇧F11' },
-    { description: 'Step over', keys: 'F10' }
-    // ... other shortcuts in this section ...
-  ],
-  'Integrated Terminal': [
-    { description: 'Show integrated terminal', keys: '⌃`' },
-    { description: 'Create new terminal', keys: '⌃⇧`' },
-    { description: 'Copy selection', keys: '⌘C' },
-    { description: 'Scroll up/down', keys: '⌘↑ / ↓' }
-    // ... other shortcuts in this section ...
-  ]
+const createSectionTableHtmlWithHeading = (sectionHeading: string, shortcuts: Shortcut[]) => {
+  const shortcutTable = createShortcutsTableHtml(shortcuts);
+
+  return `
+    <h2>${sectionHeading}</h2>
+    ${shortcutTable}
+  `;
 };
 
-export function mapFocusToSections(focus: Focus): SectionTags[] {
-  switch (focus) {
-  case 'editor':
-    return ['General', 'Basic Editing', 'Multi-Cursor and Selection', 'Search and Replace', 'Rich Languages Editing', 'Navigation', 'Editor Management', 'File Management', 'Display'];
-  case 'terminal':
-    return ['Integrated Terminal'];
-  case 'debug':
-    return ['Debug'];
-  case 'selection':
-    return ['Multi-Cursor and Selection'];
-  default:
-    return Object.keys(defaultMacShortcuts) as SectionTags[];
-  }
+function getDefaultKeybindingsVscodeAsShortcuts() {
+  return (defaultKeybindingsVscode as {command: string, key: string, when?: string}[]).map(({ command, key, when }) => ({ description: convertToWords(command), keys: key, when })) as Shortcut[];
 }
 
-export function generateSectionsHtml(focus?: Focus) {
-  const focusedSectionTags: SectionTags[] = focus ? mapFocusToSections(focus) : Object.keys(defaultMacShortcuts) as SectionTags[];
+function filterShortcutsWithWhensRepeatedMoreThanTenTimes(shortcuts: Shortcut[]) {
+  const whens = shortcuts.map(({ when }) => when);
+  const whensRepeatedMoreThanTenTimes = getWhensRepeatedMoreThanTenTimesAndSortByNumberOfOccurrences(whens);
+  console.log({ whensRepeatedMoreThanTenTimes });
+  console.log('hmmm');
+  return shortcuts.filter(({ when }) => when && whensRepeatedMoreThanTenTimes.includes(when));
+}
 
-  if (vscode.window.tabGroups.all.length > 1) { focusedSectionTags.unshift('Editor Management'); }
+function getWhensRepeatedMoreThanTenTimesAndSortByNumberOfOccurrences(whens: (string | undefined)[]) {
+  const whenAndNumberOfOccurences: Record<string, number> = {};
+  for (const when of whens) {
+    if (when) {
+      whenAndNumberOfOccurences[when] = whenAndNumberOfOccurences[when] ? whenAndNumberOfOccurences[when] + 1 : 1;
+    }
+  }
 
-  const focusedSectionsSet = new Set(focusedSectionTags);
-  
-  const sectionsHtml = [...focusedSectionsSet].map((title) => {
-    const shortcuts = defaultMacShortcuts[title];
-    const shortcutRows = shortcuts.map((shortcut) => `
-      <tr>
-        <td>${shortcut.description}</td>
-        <td>${shortcut.keys}</td>
-      </tr>
-    `).join('');
-
-    return `
-      <h2>${title}</h2>
-      <table border="1">
-        ${shortcutRows}
-      </table>
-    `;
-  }).join('');
-
-  return sectionsHtml;
+  const whensOccurringMoreThanTenTimes = Object.entries(whenAndNumberOfOccurences).filter(([, numberOfOccurences]) => numberOfOccurences > 10);
+  const sortedWhensOccurringMoreThanTenTimes = whensOccurringMoreThanTenTimes.sort(([, numberOfOccurencesA], [, numberOfOccurencesB]) => numberOfOccurencesB - numberOfOccurencesA);
+  return sortedWhensOccurringMoreThanTenTimes.map(([when, _numberOfOccurences]) => when);
 }
 
 export function getWebviewContent({ focus }: {focus?: Focus}) {
   const modes = getModes();
   const numberOfTabGroups = vscode.window.tabGroups.all.length;
+  const defaultKeybindingsVscodeAsShortcuts = getDefaultKeybindingsVscodeAsShortcuts();
+  const filteredShortcuts = filterShortcutsWithWhensRepeatedMoreThanTenTimes(defaultKeybindingsVscodeAsShortcuts);
+  const filteredShortcutsAndHeading: Record<string, Shortcut[]> = {};
+  
+  for(const shortcut of filteredShortcuts) {
+    filteredShortcutsAndHeading[shortcut.when!] = filteredShortcutsAndHeading[shortcut.when!] ? [...filteredShortcutsAndHeading[shortcut.when!], shortcut] : [shortcut];
+  }
 
-  const sectionsHtml = generateSectionsHtml(focus);
+  const currentWhens = { // tells us current focuses
+    textInputFocus: !!vscode.window.activeTextEditor,
+    'editorTextFocus && !editorReadonly': !!vscode.window.activeTextEditor,
+    editorFocus: !!vscode.window.activeTextEditor,
+    editorHoverFocused: !!vscode.window.activeTextEditor,
+    editorTextFocus: !!vscode.window.activeTextEditor
+
+  };
+
+  console.log({ currentWhens });
+  
+  const shortcutsToDisplayHtml = Object.entries(filteredShortcutsAndHeading).map(([when, shortcuts]) => {
+    // const whenIsInCurrentWhens = currentWhens[when as keyof typeof currentWhens];
+    // console.log(currentWhens[when as keyof typeof currentWhens], 'currentWhens[when]');
+    // if (!whenIsInCurrentWhens) {
+    //   return '';
+    // }
+
+    const sectionHeading = `${convertToWords(when)}: ${when}`;
+    return createSectionTableHtmlWithHeading(sectionHeading, shortcuts);
+  });
+
+
+
+
 
   return `
       <!DOCTYPE html>
@@ -173,15 +114,15 @@ export function getWebviewContent({ focus }: {focus?: Focus}) {
               text-align: left;
             }
             td {
-              font-size: 16px;
+              font-size: 15px;
             }
           </style>
         </head>
         <body>
           <h1>VSCode Keyboard Shortcuts</h1>
-          <h2>Focus: ${focus}</h2>
-          <h2>Number of Tab Groups: ${numberOfTabGroups}</h2>
-          ${sectionsHtml}
+          <h3>Focus: ${focus}</h3>
+          <h3>Number of Tab Groups: ${numberOfTabGroups}</h3>
+          ${shortcutsToDisplayHtml}
           Modes: ${modes.join(', ')}
         </body>
       </html>
