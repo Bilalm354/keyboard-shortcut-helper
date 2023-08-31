@@ -3,25 +3,25 @@ import { Focus } from '../extension';
 import { getModes } from './getModes';
 import * as vscode from 'vscode';
 
+// comments below show for which focuses the section is shown -- remove them when implementing
 export type SectionTags =
-  | 'General'
-  | 'Basic Editing'
-  | 'Multi-Cursor and Selection'
-  | 'Search and Replace'
-  | 'Rich Languages Editing'
-  | 'Navigation'
-  | 'Editor Management'
-  | 'File Management'
-  | 'Display'
-  | 'Debug'
-  | 'Integrated Terminal';
+  | 'General' // always
+  | 'Basic Editing' // editor
+  | 'Multi-Cursor and Selection' // editor
+  | 'Search and Replace' // editor
+  | 'Rich Languages Editing' // editor
+  | 'Navigation' // always
+  | 'Editor Management' // editor group
+  | 'File Management' // after file changes fr a few seconds
+  | 'Display' // always
+  | 'Debug' // debug
+  | 'Integrated Terminal'; // terminal
 
 
 export type Shortcut = {
   description: string;
   keys: string;
 };
-
 
 export function mapFocusToSections(focus: Focus): SectionTags[] {
   switch (focus) {
