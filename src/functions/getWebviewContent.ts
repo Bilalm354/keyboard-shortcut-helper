@@ -12,7 +12,7 @@ export type SectionTags =
   | 'Rich Languages Editing' // editor
   | 'Navigation' // always
   | 'Editor Management' // editor group
-  | 'File Management' // after file changes fr a few seconds
+  | 'File Management' // after file changes for a few seconds // when focus is on file explorer
   | 'Display' // always
   | 'Debug' // debug
   | 'Integrated Terminal'; // terminal
