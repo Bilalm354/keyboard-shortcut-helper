@@ -23,21 +23,21 @@ const tabGroupEvents = [
 ];
 
 const workspaceEvents = [
-  // vscode.workspace.onDidChangeConfiguration,
+  vscode.workspace.onDidChangeConfiguration,
   vscode.workspace.onDidChangeTextDocument, 
-  vscode.workspace.onDidChangeWorkspaceFolders
-  // vscode.workspace.onDidCloseTextDocument,
-  // vscode.workspace.onDidCreateFiles,
-  // vscode.workspace.onDidDeleteFiles,
-  // vscode.workspace.onDidOpenTextDocument,
-  // vscode.workspace.onDidRenameFiles,
-  // vscode.workspace.onDidSaveTextDocument,
-  // vscode.workspace.onWillCreateFiles,
-  // vscode.workspace.onWillDeleteFiles,
-  // vscode.workspace.onWillRenameFiles,
-  // vscode.workspace.onWillSaveTextDocument,
-  // vscode.workspace.onDidChangeNotebookDocument,
-  // vscode.workspace.onDidCloseNotebookDocument
+  vscode.workspace.onDidChangeWorkspaceFolders,
+  vscode.workspace.onDidCloseTextDocument,
+  vscode.workspace.onDidCreateFiles,
+  vscode.workspace.onDidDeleteFiles,
+  vscode.workspace.onDidOpenTextDocument,
+  vscode.workspace.onDidRenameFiles,
+  vscode.workspace.onDidSaveTextDocument,
+  vscode.workspace.onWillCreateFiles,
+  vscode.workspace.onWillDeleteFiles,
+  vscode.workspace.onWillRenameFiles,
+  vscode.workspace.onWillSaveTextDocument,
+  vscode.workspace.onDidChangeNotebookDocument,
+  vscode.workspace.onDidCloseNotebookDocument
   // There are more
 ];
 
@@ -101,7 +101,10 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
   private focus: Focus = 'unknown';
-  private pinnedShortcuts: Shortcut[] = [];
+  private pinnedShortcuts: Shortcut[] = [
+    { description: 'Insert cursor above', keys: '⌥⌘↑' },
+    { description: 'Insert cursor below', keys: '⌥⌘↓' }
+  ];
 
   constructor(
 		private readonly _extensionUri: vscode.Uri
@@ -133,7 +136,7 @@ class KeyboardShortcutViewProvider implements vscode.WebviewViewProvider {
   public refreshWebviewAndUpdateState() {
     if (this._view) {
       const focus = this.getFocus();
-      this._view.webview.html = getWebviewContent({ focus });
+      this._view.webview.html = getWebviewContent({ focus, pinnedShortcuts: this.pinnedShortcuts });
     }
   }
 

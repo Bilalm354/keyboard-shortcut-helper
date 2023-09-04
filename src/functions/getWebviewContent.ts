@@ -38,37 +38,45 @@ export function mapFocusToSections(focus: Focus): SectionTags[] {
   }
 }
 
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+function handlePlusClick() {
+  vscode.window.showInformationMessage('aaa');
+}
+
+function generateShortcutRowsHtml(shortcuts: Shortcut[]) {
+  return shortcuts.map((shortcut) => `
+    <tr>
+      <td>${shortcut.description}</td>
+      <td>${shortcut.keys}</td>
+      <td><span class="plus-button" onclick="handlePlusClick()">+</span></td>
+    </tr>
+  `).join('');
+}
+
+function generateShortcutTableHtml(title: string, shortcuts: Shortcut[]) {
+  const shortcutRows = generateShortcutRowsHtml(shortcuts);
+
+  return `
+    <h2>${title}</h2>
+    <table border="1">
+      ${shortcutRows}
+    </table>
+  `;
+}
+
 export function generateSectionsHtml(focus?: Focus) {
   const focusedSectionTags: SectionTags[] = focus ? mapFocusToSections(focus) : Object.keys(defaultMacShortcuts) as SectionTags[];
-
   if (vscode.window.tabGroups.all.length > 1) { focusedSectionTags.unshift('Editor Management'); }
-
   const focusedSectionsSet = new Set(focusedSectionTags);
-  
-  const sectionsHtml = [...focusedSectionsSet].map((title) => {
-    const shortcuts = defaultMacShortcuts[title];
-    const shortcutRows = shortcuts.map((shortcut) => `
-      <tr>
-        <td>${shortcut.description}</td>
-        <td>${shortcut.keys}</td>
-      </tr>
-    `).join('');
-
-    return `
-      <h2>${title}</h2>
-      <table border="1">
-        ${shortcutRows}
-      </table>
-    `;
-  }).join('');
+  const sectionsHtml = [...focusedSectionsSet].map((title) => generateShortcutTableHtml(title, defaultMacShortcuts[title])).join('');
 
   return sectionsHtml;
 }
 
-export function getWebviewContent({ focus }: {focus?: Focus}) {
+export function getWebviewContent({ focus, pinnedShortcuts }: {focus?: Focus, pinnedShortcuts?: Shortcut[]}) {
   const modes = getModes();
   const numberOfTabGroups = vscode.window.tabGroups.all.length;
-
+  const pinnedShortcutsHtml = pinnedShortcuts ? generateShortcutTableHtml('Pinned Shortcuts', pinnedShortcuts) : '';
   const sectionsHtml = generateSectionsHtml(focus);
 
   return `
@@ -100,6 +108,7 @@ export function getWebviewContent({ focus }: {focus?: Focus}) {
           <h1>VSCode Keyboard Shortcuts</h1>
           <h2>Focus: ${focus}</h2>
           <h2>Number of Tab Groups: ${numberOfTabGroups}</h2>
+          ${pinnedShortcutsHtml}
           ${sectionsHtml}
           Modes: ${modes.join(', ')}
         </body>
